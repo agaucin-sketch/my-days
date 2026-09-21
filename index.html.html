@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<title>my days.</title>
+<style>
+:root{--ink:#26272d;--muted:#898a93;--line:#e9e9ee;--soft:#f7f7f9;--accent:#d99ab2}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:var(--ink);font:14px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #9badd5;outline-offset:2px}
+.app{max-width:1180px;margin:auto;padding:20px clamp(12px,3vw,34px) 36px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px}.logo{font:30px Georgia,serif;letter-spacing:-1px}.muted{color:var(--muted)}.btn{background:white;border:1px solid var(--line);border-radius:10px;padding:9px 13px}.btn:hover{background:var(--soft)}.primary{background:var(--ink);color:white;border-color:var(--ink)}.primary:hover{background:#45464e}.head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}.monthnav{display:flex;align-items:center;gap:9px}.month{font-size:22px;font-weight:600;letter-spacing:-.6px;min-width:190px}.filters{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:15px}.pill{border:1px solid var(--line);background:white;border-radius:99px;padding:7px 12px;display:flex;align-items:center;gap:7px;font-size:12px}.pill.active{background:#f1f1f4;border-color:#dcdce3}.dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex:none}.week,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.weekday{text-align:center;color:var(--muted);font-size:11px;padding:8px 0}.day{min-width:0;min-height:105px;border:1px solid var(--line);border-radius:9px;background:#fff;padding:7px;text-align:left;display:flex;flex-direction:column;gap:5px;overflow:hidden}.day:hover{background:#fcfcfd;border-color:#c9c9d1}.day.selected{background:#f7f8fc;border-color:#8297c8;box-shadow:inset 0 0 0 1px #8297c8}.day.outside{background:#fafafa;color:#b6b6bf}.daynum{font-size:12px;width:23px;height:23px;display:flex;align-items:center;justify-content:center}.day.today .daynum{background:var(--ink);color:white;border-radius:50%}.dots{display:flex;gap:4px;flex-wrap:wrap;min-height:8px}.dayimg{width:100%;height:60px;object-fit:cover;border-radius:5px;margin-top:auto}.panel{border:1px solid var(--line);border-radius:15px;margin-top:22px;padding:clamp(12px,2.5vw,22px)}.detailhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:17px}.daytitle{font-size:20px;font-weight:600;letter-spacing:-.4px}.entry{border:1px solid var(--line);border-radius:12px;padding:13px;margin:12px 0}.entryhead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:11px}.entryname{font-weight:600;display:flex;align-items:center;gap:8px}.photos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.photo{position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;border:2px solid transparent;padding:0;background:#f4f4f6}.photo img{width:100%;height:100%;object-fit:cover;display:block}.photo.cover{border-color:#7186b8}.tag{position:absolute;bottom:4px;left:4px;background:#fff;border-radius:4px;font-size:9px;padding:3px 5px}.upload{display:inline-flex;margin-top:10px;align-items:center;gap:6px}.empty{border:1px dashed #d9d9e0;border-radius:9px;padding:18px;text-align:center;color:var(--muted);font-size:12px}.label{display:block;font-weight:600;font-size:12px;margin:14px 0 7px}textarea,input[type=text]{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px 11px;background:white;color:var(--ink)}textarea{resize:vertical;min-height:75px;line-height:1.5}.check{display:flex;align-items:center;gap:9px;margin-top:11px}.check input{accent-color:#303139;width:16px;height:16px}.manage{border-top:1px solid var(--line);margin-top:20px;padding-top:15px}.managehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}.calendarrow{display:flex;align-items:center;gap:9px;padding:10px 2px;border-bottom:1px solid #f0f0f3}.calendarrow .name{flex:1}.small{background:transparent;border:0;border-radius:6px;padding:5px 7px;color:#777}.small:hover{background:var(--soft)}.create{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.create input[type=text]{flex:1;min-width:100px}.create input[type=color]{width:36px;height:38px;border:0;background:white;padding:0}.hidden{display:none!important}.foot{display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px;margin-top:12px}.notice{font-size:11px;line-height:1.5;color:#777;background:var(--soft);padding:10px 12px;border-radius:9px;margin-top:15px}
+@media(max-width:600px){.app{padding:14px 10px 26px}.day{min-height:65px;padding:4px;border-radius:6px;gap:3px}.daynum{width:20px;height:20px;font-size:11px}.dayimg{height:36px}.week,.days{gap:3px}.month{font-size:19px;min-width:0}.photos{grid-template-columns:repeat(3,minmax(0,1fr))}.panel{padding:12px}.logo{font-size:27px}}
+</style>
+</head>
+<body>
+<main class="app">
+<header class="top"><div class="logo">my days<span style="color:#c7c7cf">.</span></div><button class="btn" id="todayBtn">Today</button></header>
+<div class="head"><div class="monthnav"><button class="btn" id="prev" aria-label="Previous month">‹</button><div class="month" id="monthLabel"></div><button class="btn" id="next" aria-label="Next month">›</button></div><button class="btn primary" id="addEntry">＋ Add entry</button></div>
+<div class="filters" id="filters"></div>
+<div class="week" id="week"></div><div class="days" id="days"></div>
+<section class="panel" id="detail">
+<div class="detailhead"><div><div class="muted" style="font-size:11px;text-transform:uppercase" id="weekday"></div><div class="daytitle" id="dateTitle"></div></div><button class="btn primary" id="save">Save</button></div>
+<div id="entries"></div>
+<label class="label" for="dayNote">Daily note</label><textarea id="dayNote" maxlength="2000" placeholder="A little note about today..."></textarea>
+<div class="foot"><span id="noteCount">0 / 2000</span><span>Remember to save your note.</span></div>
+<div class="manage"><div class="managehead"><strong>My calendars</strong><button class="btn" id="toggleCreate">＋ New calendar</button></div><div id="calendarList"></div>
+<div class="create hidden" id="createForm"><input id="calendarName" type="text" maxlength="35" placeholder="Calendar name"><input id="calendarColor" type="color" value="#d99ab2" aria-label="Calendar color"><button class="btn primary" id="createCalendar">Create</button></div></div>
+<div class="notice">Prototype storage: entries and images are saved in this browser on this device when local storage is available. This is not cloud-synced yet. Keep important photos backed up elsewhere.</div>
+</section>
+<footer class="foot"><span>my days · little steps still count</span><button class="small" id="allCalendars">Show all calendars</button></footer>
+</main>
+<script>
+(()=>{
+const $=id=>document.getElementById(id), today=new Date();today.setHours(0,0,0,0);
+const makeKey=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+let year=today.getFullYear(),month=today.getMonth(),selected=makeKey(year,month,today.getDate()),filter='all';
+let calendars=[{id:'fitness',name:'Fitness',color:'#d99ab2'},{id:'creative',name:'Creative',color:'#a8bce4'},{id:'personal',name:'Personal',color:'#b9a4d7'}],data={};
+try{const saved=JSON.parse(localStorage.getItem('mydays-data')||'null');if(saved){if(saved.calendars?.length)calendars=saved.calendars;if(saved.data)data=saved.data}}catch(e){}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cal=id=>calendars.find(c=>c.id===id);
+const dateOf=k=>{const [y,m,d]=k.split('-').map(Number);return new Date(y,m-1,d)};
+const rec=k=>data[k]||(data[k]={entries:{},note:''});
+const getEntry=(k,id)=>rec(k).entries[id]||(rec(k).entries[id]={photos:[],cover:0,note:'',done:false});
+const persist=()=>{try{localStorage.setItem('mydays-data',JSON.stringify({calendars,data}))}catch(e){alert('Storage is full. Try removing some large photos or use smaller images.')}};
+function render(){
+ $('monthLabel').textContent=new Date(year,month,1).toLocaleDateString(undefined,{month:'long',year:'numeric'});
+ $('week').innerHTML=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<div class="weekday">${d}</div>`).join('');
+ $('filters').innerHTML=`<button class="pill ${filter==='all'?'active':''}" data-filter="all">All calendars</button>`+calendars.map(c=>`<button class="pill ${filter===c.id?'active':''}" data-filter="${esc(c.id)}"><i class="dot" style="background:${c.color}"></i>${esc(c.name)}</button>`).join('');
+ $('filters').querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;render()});
+ const first=new Date(year,month,1),offset=(first.getDay()+6)%7,start=new Date(year,month,1-offset);let out='';
+ for(let i=0;i<42;i++){const dt=new Date(start);dt.setDate(start.getDate()+i);const k=makeKey(dt.getFullYear(),dt.getMonth(),dt.getDate()),r=data[k]||{entries:{}};
+ const ids=Object.keys(r.entries||{}).filter(id=>cal(id)&&(filter==='all'||filter===id));
+ const src=ids.map(id=>{const e=r.entries[id];return e.photos?.[e.cover]||e.photos?.[0]}).find(Boolean);
+ out+=`<button class="day ${dt.getMonth()!==month?'outside ':''}${k===selected?'selected ':''}${k===makeKey(today.getFullYear(),today.getMonth(),today.getDate())?'today':''}" data-day="${k}"><span class="daynum">${dt.getDate()}</span><span class="dots">${ids.map(id=>`<i class="dot" style="background:${cal(id).color}"></i>`).join('')}</span>${src?`<img class="dayimg" src="${src}" alt="Day thumbnail">`:''}</button>`;
+ }
+ $('days').innerHTML=out;$('days').querySelectorAll('[data-day]').forEach(b=>b.onclick=()=>{selected=b.dataset.day;const d=dateOf(selected);year=d.getFullYear();month=d.getMonth();render()});
+ const dt=dateOf(selected);$('weekday').textContent=dt.toLocaleDateString(undefined,{weekday:'long'}).toUpperCase();$('dateTitle').textContent=dt.toLocaleDateString(undefined,{month:'long',day:'numeric',year:'numeric'});
+ const r=rec(selected),ids=Object.keys(r.entries).filter(id=>cal(id)&&(filter==='all'||filter===id));
+ $('entries').innerHTML=ids.length?ids.map(id=>{const c=cal(id),e=r.entries[id];return `<article class="entry" data-entry="${esc(id)}"><div class="entryhead"><div class="entryname"><i class="dot" style="background:${c.color}"></i>${esc(c.name)}</div><button class="small remove">Remove</button></div><div class="photos">${e.photos.length?e.photos.map((src,i)=>`<button class="photo ${i===e.cover?'cover':''}" data-cover="${i}" title="Choose as calendar thumbnail"><img src="${src}" alt="Photo ${i+1}">${i===e.cover?'<span class="tag">Thumbnail</span>':''}</button>`).join(''):'<div class="empty" style="grid-column:1/-1">No photos added yet</div>'}</div><label class="btn upload">＋ Upload photos<input class="file hidden" type="file" accept="image/*" multiple></label><label class="label">Entry note</label><textarea class="entryNote" maxlength="1500" placeholder="Add a note for ${esc(c.name)}...">${esc(e.note)}</textarea><label class="check"><input class="done" type="checkbox" ${e.done?'checked':''}>Mark ${esc(c.name)} complete</label></article>`}).join(''):`<div class="empty">No entries for this date${filter!=='all'?' in this calendar':''}. Use “Add entry” to get started.</div>`;
+ $('dayNote').value=r.note||'';$('noteCount').textContent=$('dayNote').value.length+' / 2000';
+ $('entries').querySelectorAll('[data-entry]').forEach(box=>{const id=box.dataset.entry,e=getEntry(selected,id);
+ box.querySelector('.remove').onclick=()=>{delete rec(selected).entries[id];persist();render()};
+ box.querySelectorAll('[data-cover]').forEach(b=>b.onclick=()=>{e.cover=+b.dataset.cover;persist();render()});
+ box.querySelector('.file').onchange=ev=>{[...ev.target.files].filter(f=>f.type.startsWith('image/')).forEach(file=>{const reader=new FileReader();reader.onload=()=>{e.photos.push(reader.result);persist();render()};reader.readAsDataURL(file)});};
+ box.querySelector('.entryNote').oninput=ev=>{e.note=ev.target.value;persist()};
+ box.querySelector('.done').onchange=ev=>{e.done=ev.target.checked;persist();render()};
+ });
+ $('calendarList').innerHTML=calendars.map(c=>`<div class="calendarrow"><i class="dot" style="background:${c.color}"></i><span class="name">${esc(c.name)}</span><button class="small rename" data-id="${esc(c.id)}">Rename</button><button class="small delete" data-id="${esc(c.id)}" aria-label="Delete ${esc(c.name)}">×</button></div>`).join('');
+ $('calendarList').querySelectorAll('.rename').forEach(b=>b.onclick=()=>{const c=cal(b.dataset.id),v=prompt('Rename calendar',c.name);if(v&&v.trim()){c.name=v.trim().slice(0,35);persist();render()}});
+ $('calendarList').querySelectorAll('.delete').forEach(b=>b.onclick=()=>{const c=cal(b.dataset.id);if(!confirm(`Delete "${c.name}" and its entries?`))return;calendars=calendars.filter(x=>x.id!==c.id);Object.values(data).forEach(r=>delete r.entries[c.id]);if(filter===c.id)filter='all';persist();render()});
+}
+$('prev').onclick=()=>{if(--month<0){month=11;year--}render()};
+$('next').onclick=()=>{if(++month>11){month=0;year++}render()};
+$('todayBtn').onclick=()=>{year=today.getFullYear();month=today.getMonth();selected=makeKey(year,month,today.getDate());render()};
+$('addEntry').onclick=()=>{if(!calendars.length){alert('Create a calendar first.');return}const answer=prompt('Enter the number for the calendar to add:\\n'+calendars.map((c,i)=>`${i+1}. ${c.name}`).join('\\n'),'1');if(answer===null)return;const n=Number(answer);if(!Number.isInteger(n)||n<1||n>calendars.length){alert('Please enter a valid calendar number.');return}getEntry(selected,calendars[n-1].id);filter='all';persist();render()};
+$('dayNote').oninput=()=>{$('noteCount').textContent=$('dayNote').value.length+' / 2000'};
+$('save').onclick=()=>{rec(selected).note=$('dayNote').value;persist();$('save').textContent='Saved ✓';setTimeout(()=>$('save').textContent='Save',1200)};
+$('toggleCreate').onclick=()=>$('createForm').classList.toggle('hidden');
+$('createCalendar').onclick=()=>{const name=$('calendarName').value.trim();if(!name){$('calendarName').focus();return}calendars.push({id:'cal-'+Date.now().toString(36),name:name.slice(0,35),color:$('calendarColor').value});$('calendarName').value='';$('createForm').classList.add('hidden');persist();render()};
+$('allCalendars').onclick=()=>{filter='all';render()};
+render();
+})();
+</script>
+</body></html>
