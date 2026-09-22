@@ -1,2 +1,2 @@
-# my-days
-Daily alender/habit tracker photo diary
+# make my day
+Daily Calender/habit tracker/Photo diary
