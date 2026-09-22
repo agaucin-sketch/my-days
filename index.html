@@ -15,7 +15,7 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}button:fo
 </head>
 <body>
 <main class="app">
-<header class="top"><div class="logo">my days<span style="color:#c7c7cf">.</span></div><button class="btn" id="todayBtn">Today</button></header>
+<header class="top"><div class="logo">my days<span style="color:#c7c7cf">.</span></div><div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end"><button class="btn" id="driveConnect">Connect Google Drive</button><button class="btn" id="driveSync" disabled>Sync with Drive</button><button class="btn" id="todayBtn">Today</button></div></header>
 <div class="head"><div class="monthnav"><button class="btn" id="prev" aria-label="Previous month">‹</button><div class="month" id="monthLabel"></div><button class="btn" id="next" aria-label="Next month">›</button></div><button class="btn primary" id="addEntry">＋ Add entry</button></div>
 <div class="filters" id="filters"></div>
 <div class="week" id="week"></div><div class="days" id="days"></div>
@@ -26,13 +26,17 @@ button,input,textarea{font:inherit}button{cursor:pointer;color:inherit}button:fo
 <div class="foot"><span id="noteCount">0 / 2000</span><span>Remember to save your note.</span></div>
 <div class="manage"><div class="managehead"><strong>My calendars</strong><button class="btn" id="toggleCreate">＋ New calendar</button></div><div id="calendarList"></div>
 <div class="create hidden" id="createForm"><input id="calendarName" type="text" maxlength="35" placeholder="Calendar name"><input id="calendarColor" type="color" value="#d99ab2" aria-label="Calendar color"><button class="btn primary" id="createCalendar">Create</button></div></div>
-<div class="notice">Prototype storage: entries and images are saved in this browser on this device when local storage is available. This is not cloud-synced yet. Keep important photos backed up elsewhere.</div>
+<div class="notice" id="driveNotice">Local changes save in this browser automatically. Connect Google Drive, then use Sync with Drive to back up or restore your calendar and photos.</div>
 </section>
 <footer class="foot"><span>my days · little steps still count</span><button class="small" id="allCalendars">Show all calendars</button></footer>
 </main>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 (()=>{
 const $=id=>document.getElementById(id), today=new Date();today.setHours(0,0,0,0);
+const GOOGLE_CLIENT_ID='656267205567-9878kf6g9m9i02gcqdoae7u7epbit40m.apps.googleusercontent.com';
+let driveToken='',driveFileId='',driveFolderId='';
+const setDriveStatus=t=>$('driveNotice').textContent=t;
 const makeKey=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 let year=today.getFullYear(),month=today.getMonth(),selected=makeKey(year,month,today.getDate()),filter='all';
 let calendars=[{id:'fitness',name:'Fitness',color:'#d99ab2'},{id:'creative',name:'Creative',color:'#a8bce4'},{id:'personal',name:'Personal',color:'#b9a4d7'}],data={};
@@ -70,6 +74,59 @@ function render(){
  $('calendarList').querySelectorAll('.rename').forEach(b=>b.onclick=()=>{const c=cal(b.dataset.id),v=prompt('Rename calendar',c.name);if(v&&v.trim()){c.name=v.trim().slice(0,35);persist();render()}});
  $('calendarList').querySelectorAll('.delete').forEach(b=>b.onclick=()=>{const c=cal(b.dataset.id);if(!confirm(`Delete "${c.name}" and its entries?`))return;calendars=calendars.filter(x=>x.id!==c.id);Object.values(data).forEach(r=>delete r.entries[c.id]);if(filter===c.id)filter='all';persist();render()});
 }
+
+async function driveRequest(url,options={}){
+ const response=await fetch(url,{...options,headers:{Authorization:'Bearer '+driveToken,...(options.headers||{})}});
+ if(!response.ok)throw new Error('Google Drive returned '+response.status+' '+(await response.text()).slice(0,240));
+ return response.status===204?null:response.json();
+}
+async function findOrCreateFolder(){
+ const q=encodeURIComponent("name='My Days' and mimeType='application/vnd.google-apps.folder' and trashed=false");
+ const found=await driveRequest('https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name)');
+ if(found.files.length){driveFolderId=found.files[0].id;return;}
+ const made=await driveRequest('https://www.googleapis.com/drive/v3/files?fields=id',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'My Days',mimeType:'application/vnd.google-apps.folder'})});
+ driveFolderId=made.id;
+}
+async function findDatabase(){
+ const q=encodeURIComponent("name='my-days-data.json' and '"+driveFolderId+"' in parents and trashed=false");
+ const found=await driveRequest('https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id,name)');
+ return found.files[0]?.id||'';
+}
+async function pushDrive(){
+ await findOrCreateFolder();
+ const content=JSON.stringify({calendars,data});
+ const meta={name:'my-days-data.json',mimeType:'application/json',...(driveFileId?{}:{parents:[driveFolderId]})};
+ const boundary='mydays_boundary';
+ const body='--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+JSON.stringify(meta)+'\r\n--'+boundary+'\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n'+content+'\r\n--'+boundary+'--';
+ const url=driveFileId?'https://www.googleapis.com/upload/drive/v3/files/'+driveFileId+'?uploadType=multipart&fields=id':'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id';
+ const result=await driveRequest(url,{method:driveFileId?'PATCH':'POST',headers:{'Content-Type':'multipart/related; boundary='+boundary},body});
+ driveFileId=result.id;
+}
+async function pullDrive(){
+ const remote=await driveRequest('https://www.googleapis.com/drive/v3/files/'+driveFileId+'?alt=media');
+ if(remote&&Array.isArray(remote.calendars)&&remote.data&&typeof remote.data==='object'){
+  calendars=remote.calendars;data=remote.data;persist();render();
+ }else throw new Error('The Drive backup did not have the expected My Days data.');
+}
+function connectDrive(){
+ if(!window.google?.accounts?.oauth2){setDriveStatus('Google sign-in is still loading. Wait a moment and try again.');return;}
+ const client=google.accounts.oauth2.initTokenClient({client_id:GOOGLE_CLIENT_ID,scope:'https://www.googleapis.com/auth/drive.file',callback:async token=>{
+  if(token.error){setDriveStatus('Google sign-in failed: '+token.error);return;}
+  driveToken=token.access_token;$('driveSync').disabled=false;$('driveConnect').textContent='Reconnect Google Drive';
+  try{
+   await findOrCreateFolder();driveFileId=await findDatabase();
+   if(driveFileId){
+    const choice=confirm('A My Days backup already exists in Google Drive.\n\nChoose OK to RESTORE the Drive backup into this browser (replacing its current data).\nChoose Cancel to keep this browser’s data and upload it to Drive instead.');
+    if(choice){await pullDrive();setDriveStatus('Connected. Restored your My Days backup from Google Drive.');}
+    else{await pushDrive();setDriveStatus('Connected. This browser’s My Days data was uploaded to Google Drive.');}
+   }else{await pushDrive();setDriveStatus('Connected. Created your first My Days backup in Google Drive.');}
+  }catch(e){setDriveStatus('Drive connection issue: '+e.message);}
+ }});
+ client.requestAccessToken();
+}
+$('driveConnect').onclick=connectDrive;
+$('driveSync').onclick=async()=>{if(!driveToken){connectDrive();return;}try{const existing=await findDatabase();if(existing)driveFileId=existing;await pushDrive();setDriveStatus('Synced to Google Drive just now. Local browser storage is also updated.');}catch(e){setDriveStatus('Sync failed: '+e.message);}};
+
 $('prev').onclick=()=>{if(--month<0){month=11;year--}render()};
 $('next').onclick=()=>{if(++month>11){month=0;year++}render()};
 $('todayBtn').onclick=()=>{year=today.getFullYear();month=today.getMonth();selected=makeKey(year,month,today.getDate());render()};
